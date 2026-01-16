@@ -268,7 +268,9 @@ class TestMultimodalDemoRetriever:
         assert len(results) == 2
         assert results[0].rank == 1
         assert results[1].rank == 2
-        assert all(r.score > 0 for r in results)
+        # Scores can be negative for random embeddings (cosine similarity ranges from -1 to 1)
+        # The important thing is that results are ranked by score (highest first)
+        assert results[0].score >= results[1].score
 
     def test_retrieve_not_indexed_raises(self, sample_demos):
         """Test that retrieval without indexing raises error."""
