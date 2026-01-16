@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openadapt-retrieval"
+version = "0.1.0"
+description = "Multimodal demo retrieval using VLM embeddings for GUI automation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    {name = "Richard Abrich", email = "richard@openadapt.ai"}
+]
+keywords = ["retrieval", "embeddings", "multimodal", "vlm", "gui", "automation", "faiss"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "torch>=2.0.0",
+    "transformers>=4.40.0",
+    "pillow>=10.0.0",
+    "faiss-cpu>=1.7.4",
+    "numpy>=1.24.0",
+    "tqdm>=4.65.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "ruff>=0.1.0",
+]
+gpu = [
+    # For GPU-accelerated inference
+    "accelerate>=0.26.0",
+]
+clip = [
+    # CLIP fallback embedder
+    "open-clip-torch>=2.24.0",
+]
+serve = [
+    # HTTP API serving
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+]
+all = [
+    "openadapt-retrieval[dev,gpu,clip,serve]",
+]
+
+[project.scripts]
+openadapt-retrieval = "openadapt_retrieval.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/OpenAdaptAI/openadapt-retrieval"
+Repository = "https://github.com/OpenAdaptAI/openadapt-retrieval"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openadapt_retrieval"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+markers = [
+    "gpu: marks tests as requiring GPU (deselect with '-m \"not gpu\"')",
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
