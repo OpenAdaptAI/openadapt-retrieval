@@ -1,5 +1,11 @@
 # openadapt-retrieval
 
+[![Build Status](https://github.com/OpenAdaptAI/openadapt-retrieval/workflows/Publish%20to%20PyPI/badge.svg?branch=main)](https://github.com/OpenAdaptAI/openadapt-retrieval/actions)
+[![PyPI version](https://img.shields.io/pypi/v/openadapt-retrieval.svg)](https://pypi.org/project/openadapt-retrieval/)
+[![Downloads](https://img.shields.io/pypi/dm/openadapt-retrieval.svg)](https://pypi.org/project/openadapt-retrieval/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+
 Multimodal demo retrieval using VLM embeddings for GUI automation.
 
 ## Overview
