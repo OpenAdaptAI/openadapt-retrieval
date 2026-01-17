@@ -12,6 +12,9 @@ license = "MIT"
 authors = [
     {name = "Richard Abrich", email = "richard@openadapt.ai"}
 ]
+maintainers = [
+    {name = "OpenAdaptAI", email = "info@openadapt.ai"}
+]
 keywords = ["retrieval", "embeddings", "multimodal", "vlm", "gui", "automation", "faiss"]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -63,6 +66,9 @@ openadapt-retrieval = "openadapt_retrieval.cli:main"
 [project.urls]
 Homepage = "https://github.com/OpenAdaptAI/openadapt-retrieval"
 Repository = "https://github.com/OpenAdaptAI/openadapt-retrieval"
+Documentation = "https://github.com/OpenAdaptAI/openadapt-retrieval#readme"
+Issues = "https://github.com/OpenAdaptAI/openadapt-retrieval/issues"
+Changelog = "https://github.com/OpenAdaptAI/openadapt-retrieval/releases"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/openadapt_retrieval"]
