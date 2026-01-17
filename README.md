@@ -14,7 +14,7 @@ Multimodal demo retrieval using VLM embeddings for GUI automation.
 
 **Key Features:**
 - **Multimodal Embeddings**: Embed text, images, or both into a shared vector space
-- **Qwen3-VL-Embedding Support**: Primary embedder using Alibaba's state-of-the-art VLM
+- **Qwen3-VL-Embedding Support**: Primary embedder using Alibaba's Qwen3-VL model
 - **Matryoshka Representation Learning (MRL)**: Flexible embedding dimensions (512-8192)
 - **FAISS Integration**: Fast similarity search with support for large demo libraries
 - **Persistence**: Save and load indices with embeddings and metadata
