@@ -81,3 +81,14 @@ markers = [
     "gpu: marks tests as requiring GPU (deselect with '-m \"not gpu\"')",
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+commit_message = "chore: release {version}"
+build_command = "uv build"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "style", "test"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
