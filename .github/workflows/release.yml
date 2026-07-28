@@ -1,56 +1,63 @@
 name: Release and PyPI Publish
 
-# WHY THIS IS DISPATCH-ONLY AND USES ADMIN_TOKEN
-# ----------------------------------------------
-# This workflow ran on every push to main with the default GITHUB_TOKEN. Since
-# branch protection was enabled on main (some time after the last successful
-# release on 2026-01-29; the first rejection is the run of 2026-02-18), it could
-# not succeed. python-semantic-release computes the next version, commits the
-# bump, tags it, and pushes to main -- and main now requires a pull request:
+# Push-triggered, with ADMIN_TOKEN. This is the same shape as the sibling
+# release workflow in openadapt-privacy, which hit the identical failure on the
+# same day and was repaired on 2026-07-15.
+#
+# WHAT BROKE
+# ----------
+# This workflow ran on every push to main with the default GITHUB_TOKEN. Branch
+# protection was enabled on main some time after the last successful release on
+# 2026-01-29; the first rejection is the run of 2026-02-18.
+# python-semantic-release computes the next version, commits the bump, tags it,
+# and pushes to main -- and main requires a pull request:
 #
 #     remote: error: GH006: Protected branch update failed for refs/heads/main.
 #     remote: - Changes must be made through a pull request.
 #     ##[error] Failed to push branch (main) to remote
 #
-# The push is the step *before* build and publish, so nothing was ever
-# published from a failing run. PyPI, the git tag, the GitHub Release, and
-# pyproject.toml all still agree; the release simply stopped moving.
-# openadapt-privacy hit the identical failure on the same day and was repaired
-# on 2026-07-15 by adding ADMIN_TOKEN; this applies the same repair here.
+# That push is the step *before* build and publish, and every later step is
+# gated on `released == 'true'`, so a failing run published nothing. PyPI, the
+# git tag, the GitHub Release, and pyproject.toml all still agree; the release
+# lane simply stopped moving, for five months, while the README's release badge
+# showed "failing" the whole time.
 #
-# Two changes:
+# THE FIX
+# -------
+# secrets.ADMIN_TOKEN is the organization-scoped release credential (visibility
+# "all") already used by openadapt-flow and openadapt-privacy. Branch
+# protection here sets enforce_admins=false, so an admin credential can push
+# the generated version commit and tag; GITHUB_TOKEN cannot.
 #
-#   1. secrets.ADMIN_TOKEN -- the organization-scoped release credential
-#      (visibility "all") already used by openadapt-flow and openadapt-privacy.
-#      Branch protection here sets enforce_admins=false, so an admin credential
-#      can push the generated version commit and tag; GITHUB_TOKEN cannot.
+# WHY `push` AND NOT `workflow_dispatch`
+# --------------------------------------
+# An earlier repair made this workflow dispatch-only, on the reasoning that
+# merging would publish a release whose only content was a CI-config change.
+# Whether a merge releases is not a property of the trigger. Releases here are
+# decided by Conventional Commits: `[tool.semantic_release.commit_parser_options]`
+# in pyproject.toml sets `minor_tags = ["feat"]` and `patch_tags = ["fix",
+# "perf"]`, so a `ci:`, `chore:`, `docs:`, `build:`, `refactor:`, `style:` or
+# `test:` commit changes no version and publishes nothing -- the run reports no
+# release and exits green. openadapt-privacy demonstrates exactly that: four
+# chore/docs commits since v1.0.0, four green push-triggered release runs, and
+# PyPI still on 1.0.0. Publishing on merge is a commit-message choice.
 #
-#   2. workflow_dispatch instead of push -- releasing becomes an explicit act
-#      rather than a side effect of merging a README edit. This matches the
-#      canonical openadapt-flow release workflow and keeps release minutes off
-#      every push (AGENTS.md 5.1, build-speed and hosted-CI cost discipline).
-#      It also matters here specifically: the commits accumulated since v0.1.2
-#      are CI config, .gitignore, and docs only -- no library code has changed,
-#      so an automatic release would publish a version whose sole content is a
-#      version bump.
+# openadapt-flow is dispatch-only for a different and specific reason: a
+# packaging/licensing incident that requires a human decision before every
+# publish. No such gate applies to this library.
 #
-# To cut a release:
-#
-#     gh workflow run "Release and PyPI Publish" \
-#       --repo OpenAdaptAI/openadapt-retrieval --ref main
-#
-# python-semantic-release then coalesces the Conventional Commits since the last
-# tag, picks the next version, tags it, and publishes to PyPI and GitHub
-# Releases. Prerequisites are repository/organization settings, not code:
-# secrets.ADMIN_TOKEN with visibility "all", and PyPI Trusted Publishing for
-# this package.
+# Dispatch-only is not free here. It needs a person to remember to run the
+# release by hand, it leaves the release badge stuck on its last failure, and
+# it makes this repository behave unlike its siblings. Divergence of that kind
+# is why the GH006 failure above went unnoticed for five months.
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   release:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency: release
     permissions:
