@@ -14,7 +14,7 @@
 > every repository are in the
 > [repository lifecycle registry](https://github.com/OpenAdaptAI/.github/blob/main/REPOSITORY_LIFECYCLE.md).
 
-[![Build Status](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/publish.yml/badge.svg)](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/publish.yml)
+[![Release](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/release.yml/badge.svg)](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/release.yml)
 [![PyPI version](https://img.shields.io/pypi/v/openadapt-retrieval.svg)](https://pypi.org/project/openadapt-retrieval/)
 [![Downloads](https://img.shields.io/pypi/dm/openadapt-retrieval.svg)](https://pypi.org/project/openadapt-retrieval/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
