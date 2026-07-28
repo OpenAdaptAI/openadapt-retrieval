@@ -7,15 +7,15 @@ for GUI automation agents.
 
 from openadapt_retrieval.embeddings import (
     BaseEmbedder,
-    Qwen3VLEmbedder,
     CLIPEmbedder,
+    Qwen3VLEmbedder,
     get_embedder,
 )
 from openadapt_retrieval.retriever import (
-    MultimodalDemoRetriever,
-    VectorIndex,
-    RetrievalResult,
     DemoMetadata,
+    MultimodalDemoRetriever,
+    RetrievalResult,
+    VectorIndex,
 )
 from openadapt_retrieval.storage import EmbeddingStorage
 

@@ -8,16 +8,16 @@ from __future__ import annotations
 
 import json
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
 from PIL import Image
 from pydantic import BaseModel
 
-from openadapt_retrieval.embeddings import get_embedder, BaseEmbedder
+from openadapt_retrieval.embeddings import BaseEmbedder, get_embedder
 from openadapt_retrieval.retriever.index import VectorIndex
 
 logger = logging.getLogger(__name__)
@@ -39,10 +39,10 @@ class DemoMetadata(BaseModel):
 
     demo_id: str
     task: str
-    screenshot_path: Optional[str] = None
-    app_name: Optional[str] = None
-    domain: Optional[str] = None
-    platform: Optional[str] = None
+    screenshot_path: str | None = None
+    app_name: str | None = None
+    domain: str | None = None
+    platform: str | None = None
     tags: list[str] = []
     metadata: dict[str, Any] = {}
 
@@ -61,7 +61,7 @@ class RetrievalResult(BaseModel):
     demo: DemoMetadata
     score: float
     embedding_score: float
-    rerank_score: Optional[float] = None
+    rerank_score: float | None = None
     rank: int = 0
 
 
@@ -80,10 +80,10 @@ class RetrieverConfig:
     """
 
     embedder_name: str = "qwen3vl"
-    embedding_dim: Optional[int] = 512
-    device: Optional[str] = None
+    embedding_dim: int | None = 512
+    device: str | None = None
     use_faiss: bool = True
-    index_path: Optional[Path] = None
+    index_path: Path | None = None
     app_bonus: float = 0.1
     domain_bonus: float = 0.1
 
@@ -130,11 +130,11 @@ class MultimodalDemoRetriever:
 
     def __init__(
         self,
-        config: Optional[RetrieverConfig] = None,
+        config: RetrieverConfig | None = None,
         embedder_name: str = "qwen3vl",
-        embedding_dim: Optional[int] = 512,
-        device: Optional[str] = None,
-        index_path: Optional[Union[str, Path]] = None,
+        embedding_dim: int | None = 512,
+        device: str | None = None,
+        index_path: str | Path | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the multimodal demo retriever.
@@ -167,12 +167,12 @@ class MultimodalDemoRetriever:
         self.config = config
 
         # Initialize embedder (lazy loaded)
-        self._embedder: Optional[BaseEmbedder] = None
+        self._embedder: BaseEmbedder | None = None
 
         # Index state
         self._demos: list[DemoMetadata] = []
-        self._embeddings: Optional[NDArray[np.float32]] = None
-        self._index: Optional[VectorIndex] = None
+        self._embeddings: NDArray[np.float32] | None = None
+        self._index: VectorIndex | None = None
         self._is_indexed = False
 
     @property
@@ -199,12 +199,12 @@ class MultimodalDemoRetriever:
         self,
         demo_id: str,
         task: str,
-        screenshot: Optional[Union[str, Path, Image.Image]] = None,
-        app_name: Optional[str] = None,
-        domain: Optional[str] = None,
-        platform: Optional[str] = None,
-        tags: Optional[list[str]] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        screenshot: str | Path | Image.Image | None = None,
+        app_name: str | None = None,
+        domain: str | None = None,
+        platform: str | None = None,
+        tags: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> DemoMetadata:
         """Add a demonstration to the library.
 
@@ -267,7 +267,7 @@ class MultimodalDemoRetriever:
         """Get all demo metadata objects."""
         return list(self._demos)
 
-    def get_demo(self, demo_id: str) -> Optional[DemoMetadata]:
+    def get_demo(self, demo_id: str) -> DemoMetadata | None:
         """Get a demo by ID."""
         for demo in self._demos:
             if demo.demo_id == demo_id:
@@ -334,10 +334,10 @@ class MultimodalDemoRetriever:
     def retrieve(
         self,
         task: str,
-        screenshot: Optional[Union[str, Path, Image.Image]] = None,
+        screenshot: str | Path | Image.Image | None = None,
         top_k: int = 5,
-        app_context: Optional[str] = None,
-        domain_context: Optional[str] = None,
+        app_context: str | None = None,
+        domain_context: str | None = None,
     ) -> list[RetrievalResult]:
         """Retrieve top-K most similar demos for a query.
 
@@ -392,19 +392,21 @@ class MultimodalDemoRetriever:
     def _compute_context_bonus(
         self,
         demo: DemoMetadata,
-        app_context: Optional[str],
-        domain_context: Optional[str],
+        app_context: str | None,
+        domain_context: str | None,
     ) -> float:
         """Compute context bonus for app/domain matching."""
         bonus = 0.0
 
-        if app_context and demo.app_name:
-            if app_context.lower() in demo.app_name.lower():
-                bonus += self.config.app_bonus
+        if app_context and demo.app_name and app_context.lower() in demo.app_name.lower():
+            bonus += self.config.app_bonus
 
-        if domain_context and demo.domain:
-            if domain_context.lower() in demo.domain.lower():
-                bonus += self.config.domain_bonus
+        if (
+            domain_context
+            and demo.domain
+            and domain_context.lower() in demo.domain.lower()
+        ):
+            bonus += self.config.domain_bonus
 
         return bonus
 
@@ -412,7 +414,7 @@ class MultimodalDemoRetriever:
     # Persistence
     # =========================================================================
 
-    def save(self, path: Optional[Union[str, Path]] = None) -> None:
+    def save(self, path: str | Path | None = None) -> None:
         """Save the index to disk.
 
         Args:
@@ -455,7 +457,7 @@ class MultimodalDemoRetriever:
 
         logger.info(f"Index saved to {path} with {len(self._demos)} demos")
 
-    def load(self, path: Optional[Union[str, Path]] = None) -> None:
+    def load(self, path: str | Path | None = None) -> None:
         """Load index from disk.
 
         Args:

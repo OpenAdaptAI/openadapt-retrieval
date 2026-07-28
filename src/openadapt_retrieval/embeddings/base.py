@@ -6,7 +6,7 @@ providing a consistent API for text, image, and multimodal embeddings.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -46,7 +46,6 @@ class BaseEmbedder(ABC):
         Returns:
             int: The dimensionality of the embedding vectors produced by this model.
         """
-        pass
 
     @property
     @abstractmethod
@@ -56,7 +55,6 @@ class BaseEmbedder(ABC):
         Returns:
             str: A unique identifier for this embedding model (e.g., HuggingFace model name).
         """
-        pass
 
     @abstractmethod
     def embed_text(self, text: str) -> NDArray[np.float32]:
@@ -68,12 +66,11 @@ class BaseEmbedder(ABC):
         Returns:
             Embedding vector as float32 numpy array of shape (embedding_dim,).
         """
-        pass
 
     @abstractmethod
     def embed_image(
         self,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed an image.
 
@@ -87,13 +84,12 @@ class BaseEmbedder(ABC):
             FileNotFoundError: If image path does not exist.
             ValueError: If image format is not supported.
         """
-        pass
 
     @abstractmethod
     def embed_multimodal(
         self,
         text: str,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed text and image together (recommended for best retrieval quality).
 
@@ -104,7 +100,6 @@ class BaseEmbedder(ABC):
         Returns:
             Embedding vector as float32 numpy array of shape (embedding_dim,).
         """
-        pass
 
     def embed_batch(
         self,

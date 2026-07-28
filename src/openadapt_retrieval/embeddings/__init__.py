@@ -6,14 +6,14 @@ into a unified vector space.
 """
 
 from openadapt_retrieval.embeddings.base import BaseEmbedder
-from openadapt_retrieval.embeddings.qwen3vl import Qwen3VLEmbedder
 from openadapt_retrieval.embeddings.clip import CLIPEmbedder
-from openadapt_retrieval.embeddings.registry import get_embedder, EMBEDDER_REGISTRY
+from openadapt_retrieval.embeddings.qwen3vl import Qwen3VLEmbedder
+from openadapt_retrieval.embeddings.registry import EMBEDDER_REGISTRY, get_embedder
 
 __all__ = [
-    "BaseEmbedder",
-    "Qwen3VLEmbedder",
-    "CLIPEmbedder",
-    "get_embedder",
     "EMBEDDER_REGISTRY",
+    "BaseEmbedder",
+    "CLIPEmbedder",
+    "Qwen3VLEmbedder",
+    "get_embedder",
 ]

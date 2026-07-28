@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -61,7 +60,7 @@ class VectorIndex:
         self._use_faiss = use_faiss
         self._index_type = index_type
         self._faiss_index = None
-        self._vectors: Optional[NDArray[np.float32]] = None
+        self._vectors: NDArray[np.float32] | None = None
         self._faiss = None
 
         if use_faiss:
@@ -152,7 +151,7 @@ class VectorIndex:
         self,
         query: NDArray[np.float32],
         top_k: int = 5,
-    ) -> Tuple[NDArray[np.float32], NDArray[np.int64]]:
+    ) -> tuple[NDArray[np.float32], NDArray[np.int64]]:
         """Search for nearest neighbors.
 
         Args:
@@ -198,7 +197,7 @@ class VectorIndex:
 
         return scores, indices
 
-    def save(self, path: Union[str, Path]) -> None:
+    def save(self, path: str | Path) -> None:
         """Save the index to disk.
 
         Args:
@@ -215,7 +214,7 @@ class VectorIndex:
             np.save(str(path.with_suffix(".npy")), self._vectors)
             logger.info(f"Numpy vectors saved to {path.with_suffix('.npy')}")
 
-    def load(self, path: Union[str, Path]) -> None:
+    def load(self, path: str | Path) -> None:
         """Load the index from disk.
 
         Args:
@@ -244,7 +243,7 @@ class VectorIndex:
         if self._use_faiss:
             self._create_faiss_index()
 
-    def get_vectors(self) -> Optional[NDArray[np.float32]]:
+    def get_vectors(self) -> NDArray[np.float32] | None:
         """Get all vectors in the index.
 
         Returns:
@@ -258,6 +257,16 @@ class VectorIndex:
                 n = self._faiss_index.ntotal
                 if n > 0:
                     return self._faiss_index.reconstruct_n(0, n)
-            except Exception:
-                pass
+            except (RuntimeError, AttributeError) as exc:
+                # Do not return None silently here. None is this method's
+                # DOCUMENTED answer for "FAISS-only storage, no vectors to
+                # hand back", so a failed reconstruction was indistinguishable
+                # from the normal case and a caller would conclude the index
+                # simply had nothing to give.
+                logger.warning(
+                    "FAISS reconstruct_n failed for %d vectors: %s: %s",
+                    n,
+                    type(exc).__name__,
+                    exc,
+                )
         return None

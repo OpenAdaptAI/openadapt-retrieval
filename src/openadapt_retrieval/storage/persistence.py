@@ -10,7 +10,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -50,7 +50,7 @@ class EmbeddingStorage:
 
     def __init__(
         self,
-        path: Union[str, Path],
+        path: str | Path,
     ) -> None:
         """Initialize the storage manager.
 
@@ -62,8 +62,8 @@ class EmbeddingStorage:
     def save(
         self,
         embeddings: NDArray[np.float32],
-        metadata: Optional[list[dict[str, Any]]] = None,
-        config: Optional[dict[str, Any]] = None,
+        metadata: list[dict[str, Any]] | None = None,
+        config: dict[str, Any] | None = None,
     ) -> None:
         """Save embeddings and metadata to disk.
 
@@ -158,7 +158,7 @@ class EmbeddingStorage:
     def append(
         self,
         embeddings: NDArray[np.float32],
-        metadata: Optional[list[dict[str, Any]]] = None,
+        metadata: list[dict[str, Any]] | None = None,
     ) -> None:
         """Append new embeddings to existing storage.
 

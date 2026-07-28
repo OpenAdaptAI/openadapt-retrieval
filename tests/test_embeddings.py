@@ -7,7 +7,7 @@ GPU tests are marked with pytest.mark.gpu and require a CUDA device.
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -150,18 +150,20 @@ class TestMockEmbedding:
         def mock_embed(text=None, image=None, instruction=None):
             return np.random.randn(512).astype(np.float32)
 
-        with patch.object(embedder, "_embed", mock_embed):
-            with patch.object(embedder, "_load_model", lambda: None):
-                inputs = [
-                    {"text": sample_text},
-                    {"text": "Another task", "image": str(sample_image)},
-                    {"image": str(sample_image)},
-                ]
+        with (
+            patch.object(embedder, "_embed", mock_embed),
+            patch.object(embedder, "_load_model", lambda: None),
+        ):
+            inputs = [
+                {"text": sample_text},
+                {"text": "Another task", "image": str(sample_image)},
+                {"image": str(sample_image)},
+            ]
 
-                embeddings = embedder.embed_batch(inputs, show_progress=False)
+            embeddings = embedder.embed_batch(inputs, show_progress=False)
 
-                assert embeddings.shape == (3, 512)
-                assert embeddings.dtype == np.float32
+            assert embeddings.shape == (3, 512)
+            assert embeddings.dtype == np.float32
 
 
 @pytest.mark.gpu

@@ -5,17 +5,17 @@ searching demonstration recordings based on text and image similarity.
 """
 
 from openadapt_retrieval.retriever.demo_retriever import (
-    MultimodalDemoRetriever,
     DemoMetadata,
+    MultimodalDemoRetriever,
     RetrievalResult,
 )
 from openadapt_retrieval.retriever.index import VectorIndex
 from openadapt_retrieval.retriever.reranker import CrossEncoderReranker
 
 __all__ = [
-    "MultimodalDemoRetriever",
+    "CrossEncoderReranker",
     "DemoMetadata",
+    "MultimodalDemoRetriever",
     "RetrievalResult",
     "VectorIndex",
-    "CrossEncoderReranker",
 ]

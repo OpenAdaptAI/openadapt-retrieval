@@ -6,7 +6,7 @@ These tests verify the demo retrieval pipeline works correctly.
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
