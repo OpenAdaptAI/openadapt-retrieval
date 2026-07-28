@@ -6,19 +6,18 @@ making it easy to switch between different embedding models.
 
 from __future__ import annotations
 
-from typing import Any, Type
+from typing import Any
 
 from openadapt_retrieval.embeddings.base import BaseEmbedder
 
-
 # Registry of available embedders
-EMBEDDER_REGISTRY: dict[str, Type[BaseEmbedder]] = {}
+EMBEDDER_REGISTRY: dict[str, type[BaseEmbedder]] = {}
 
 
 def _register_embedders() -> None:
     """Register built-in embedders."""
-    from openadapt_retrieval.embeddings.qwen3vl import Qwen3VLEmbedder
     from openadapt_retrieval.embeddings.clip import CLIPEmbedder
+    from openadapt_retrieval.embeddings.qwen3vl import Qwen3VLEmbedder
 
     EMBEDDER_REGISTRY["qwen3vl"] = Qwen3VLEmbedder
     EMBEDDER_REGISTRY["qwen"] = Qwen3VLEmbedder  # Alias
@@ -72,7 +71,7 @@ def get_embedder(
     return embedder_class(**kwargs)
 
 
-def register_embedder(name: str, embedder_class: Type[BaseEmbedder]) -> None:
+def register_embedder(name: str, embedder_class: type[BaseEmbedder]) -> None:
     """Register a custom embedder.
 
     This allows extending the registry with custom embedder implementations.

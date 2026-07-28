@@ -16,7 +16,7 @@ import io
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -47,13 +47,13 @@ class Qwen3VLEmbedderConfig:
     """
 
     model_name: str = "Alibaba-NLP/gte-Qwen2-VL-2B-instruct"
-    embedding_dim: Optional[int] = 512
-    device: Optional[str] = None
+    embedding_dim: int | None = 512
+    device: str | None = None
     torch_dtype: str = "float16"
     use_flash_attention: bool = True
     max_image_size: int = 1280
     normalize_embeddings: bool = True
-    cache_dir: Optional[Path] = None
+    cache_dir: Path | None = None
     default_instruction: str = "Retrieve demonstrations for GUI automation tasks."
 
     # Model-specific max dimensions
@@ -99,10 +99,10 @@ class Qwen3VLEmbedder(BaseEmbedder):
 
     def __init__(
         self,
-        config: Optional[Qwen3VLEmbedderConfig] = None,
-        embedding_dim: Optional[int] = None,
-        device: Optional[str] = None,
-        model_name: Optional[str] = None,
+        config: Qwen3VLEmbedderConfig | None = None,
+        embedding_dim: int | None = None,
+        device: str | None = None,
+        model_name: str | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the Qwen3-VL-Embedding embedder.
@@ -188,7 +188,7 @@ class Qwen3VLEmbedder(BaseEmbedder):
 
         try:
             import torch
-            from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
+            from transformers import AutoProcessor, Qwen2VLForConditionalGeneration
         except ImportError:
             raise ImportError(
                 "transformers>=4.40.0 and torch>=2.0.0 are required for Qwen3VLEmbedder. "
@@ -253,7 +253,7 @@ class Qwen3VLEmbedder(BaseEmbedder):
 
     def _prepare_image(
         self,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> Image.Image:
         """Load and preprocess image."""
         if isinstance(image, (str, Path)):
@@ -282,9 +282,9 @@ class Qwen3VLEmbedder(BaseEmbedder):
 
     def _embed(
         self,
-        text: Optional[str] = None,
-        image: Optional[Union[str, Path, Image.Image]] = None,
-        instruction: Optional[str] = None,
+        text: str | None = None,
+        image: str | Path | Image.Image | None = None,
+        instruction: str | None = None,
     ) -> NDArray[np.float32]:
         """Internal embedding method that handles all input combinations."""
         if text is None and image is None:
@@ -369,7 +369,7 @@ class Qwen3VLEmbedder(BaseEmbedder):
 
     def embed_image(
         self,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed an image."""
         return self._embed(text=None, image=image)
@@ -377,7 +377,7 @@ class Qwen3VLEmbedder(BaseEmbedder):
     def embed_multimodal(
         self,
         text: str,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed text and image together."""
         return self._embed(text=text, image=image)

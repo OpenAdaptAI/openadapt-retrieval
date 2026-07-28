@@ -41,7 +41,13 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
-    "ruff>=0.1.0",
+    # Bounded on purpose. `ruff>=0.1.0` unpinned means `ruff check` here answers
+    # differently depending on the day it is run: ruff 0.16.0 grew its DEFAULT
+    # rule set from 59 rules to 413, and this project selected no rules
+    # explicitly, so it silently inherited 354 new ones. This tree reported 0
+    # findings under ruff 0.14 and 103 under 0.16. Raise the ceiling
+    # deliberately, with the findings cleared in the same change.
+    "ruff>=0.16,<0.17",
 ]
 gpu = [
     # For GPU-accelerated inference
@@ -75,6 +81,25 @@ packages = ["src/openadapt_retrieval"]
 
 [tool.ruff]
 line-length = 100
+target-version = "py310"
+
+# There is deliberately no `select` here. After the fixes in this change the
+# package clears the whole ruff 0.16 default set (413 rules), so narrowing it to
+# a handful of prefixes would discard coverage it is earning today -- including
+# the S110 rule that surfaced the silently-dropped FAISS reconstruction below.
+# Predictability comes from the bounded `ruff>=0.16,<0.17` in the dev extra
+# above: ruff only grows its default set in a minor release, so the rule set
+# cannot move until a person raises that ceiling and owns the new findings in
+# the same change.
+
+[tool.ruff.lint.per-file-ignores]
+# RUF022 wants `__all__` sorted alphabetically. This package's `__all__` is
+# grouped by subsystem with `# Embedders` / `# Retriever` / `# Storage`
+# headings, and an alphabetical sort strands all three comments against
+# unrelated names. The grouping documents the package layout and is worth more
+# than the ordering, so the rule is turned off for this one file rather than
+# repo-wide.
+"src/openadapt_retrieval/__init__.py" = ["RUF022"]
 
 [tool.pytest.ini_options]
 markers = [

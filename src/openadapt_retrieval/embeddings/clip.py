@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -61,7 +61,7 @@ class CLIPEmbedder(BaseEmbedder):
         self,
         model_name: str = DEFAULT_MODEL,
         pretrained: str = DEFAULT_PRETRAINED,
-        device: Optional[str] = None,
+        device: str | None = None,
         normalize_embeddings: bool = True,
         **kwargs: Any,
     ) -> None:
@@ -84,7 +84,7 @@ class CLIPEmbedder(BaseEmbedder):
         self._tokenizer = None
         self._device = None
         self._torch = None
-        self._embedding_dim: Optional[int] = None
+        self._embedding_dim: int | None = None
 
     @property
     def embedding_dim(self) -> int:
@@ -154,7 +154,7 @@ class CLIPEmbedder(BaseEmbedder):
 
     def _prepare_image(
         self,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> Image.Image:
         """Load and prepare image for CLIP."""
         if isinstance(image, (str, Path)):
@@ -163,6 +163,7 @@ class CLIPEmbedder(BaseEmbedder):
                 img = Image.open(image_path).convert("RGB")
             elif str(image).startswith(("http://", "https://")):
                 import io
+
                 import requests
                 response = requests.get(str(image), timeout=30)
                 img = Image.open(io.BytesIO(response.content)).convert("RGB")
@@ -192,7 +193,7 @@ class CLIPEmbedder(BaseEmbedder):
 
     def embed_image(
         self,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed an image using CLIP."""
         self._load_model()
@@ -213,7 +214,7 @@ class CLIPEmbedder(BaseEmbedder):
     def embed_multimodal(
         self,
         text: str,
-        image: Union[str, Path, Image.Image],
+        image: str | Path | Image.Image,
     ) -> NDArray[np.float32]:
         """Embed text and image together.
 

@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any
 
-import numpy as np
 from PIL import Image
 
 from openadapt_retrieval.retriever.demo_retriever import DemoMetadata, RetrievalResult
@@ -52,7 +51,7 @@ class CrossEncoderReranker:
     def __init__(
         self,
         model_name: str = "Qwen/Qwen3-VL-Reranker-2B",
-        device: Optional[str] = None,
+        device: str | None = None,
         **kwargs: Any,
     ) -> None:
         """Initialize the reranker.
@@ -92,7 +91,7 @@ class CrossEncoderReranker:
         self,
         task: str,
         candidates: list[RetrievalResult],
-        screenshot: Optional[Union[str, Path, Image.Image]] = None,
+        screenshot: str | Path | Image.Image | None = None,
         top_k: int = 5,
     ) -> list[RetrievalResult]:
         """Rerank candidates using cross-attention.
@@ -129,7 +128,7 @@ class CrossEncoderReranker:
     def _compute_rerank_scores(
         self,
         task: str,
-        screenshot: Optional[Union[str, Path, Image.Image]],
+        screenshot: str | Path | Image.Image | None,
         candidates: list[RetrievalResult],
         top_k: int,
     ) -> list[RetrievalResult]:
@@ -149,7 +148,7 @@ class CrossEncoderReranker:
     def score_pair(
         self,
         query_task: str,
-        query_screenshot: Optional[Union[str, Path, Image.Image]],
+        query_screenshot: str | Path | Image.Image | None,
         candidate: DemoMetadata,
     ) -> float:
         """Score a single query-candidate pair.

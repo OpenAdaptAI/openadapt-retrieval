@@ -16,7 +16,6 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 
@@ -253,7 +252,7 @@ def cmd_info(args: argparse.Namespace) -> int:
     return 0
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
         description="OpenAdapt Retrieval - Multimodal demo retrieval CLI",
