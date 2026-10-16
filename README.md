@@ -1,7 +1,7 @@
 # openadapt-retrieval
 
-> [!NOTE]
-> Research: multimodal demonstration retrieval, not needed to record, compile, or run a workflow.
+> [!WARNING]
+> Archived research, no longer maintained: multimodal demonstration retrieval, not needed to record, compile, or run a workflow.
 > The product is [openadapt-flow](https://github.com/OpenAdaptAI/openadapt-flow), installed with `pip install openadapt`.
 
 [![Release](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/release.yml/badge.svg)](https://github.com/OpenAdaptAI/openadapt-retrieval/actions/workflows/release.yml)
